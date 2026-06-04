@@ -8,31 +8,33 @@
  * @author User
  */
     // player inherits name from person
+import processing.core.PApplet;
+
+// player inherits from person (Inheritance)
 public class player extends person {
     
-    // 1. Attributes (New Game Data)
+    // RPG attributes
     public int hp;
-    public int maxHp;      // Max health limit
-    public int gold;       // Money to buy things
-    public int damage;     // Attack power
-    public int defense;    // Shield block power
-    public int speed;      // Fast or slow (Decides who attacks first)
-    
-    public boolean hasSword;  // Will increase damage
-    public boolean hasShield; // Will increase defense
-    
-    // 2. Constructor
-    public player(String name) {
-        super(name); 
+    public int maxHp;
+    public int gold;
+    public int damage;
+    public int defense;
+    public int speed;
+    public boolean hasSword;
+    public boolean hasShield;
+
+    // Fix: Update the constructor to accept 5 parameters!
+    public player(PApplet p, int x, int y, String name, int age) {
+        // Pass p, x, y, name, age to the parent (person) class
+        super(p, x, y, name, age); 
         
-        // Starting Data (You have money now!)
+        // Setup starting values
         this.maxHp = 100;
         this.hp = 100;
-        this.gold = 30;       // Start with 30 gold
-        this.damage = 10;     // Base attack
-        this.defense = 2;     // Base defense
-        this.speed = 5;       // Base speed
-        
+        this.gold = 30; // Start with some money as you wished!
+        this.damage = 10;
+        this.defense = 2;
+        this.speed = 5;
         this.hasSword = false;
         this.hasShield = false;
     }

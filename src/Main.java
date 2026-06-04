@@ -7,28 +7,67 @@
  *
  * @author User
  */
-import javax.swing.JFrame;
-import java.awt.Color;
+import processing.core.PApplet;
+public class Main extends PApplet {
 
-public class Main {
+    public player hero; 
+    public int stage = 0; // stage 0 = Menu Screen, stage 1 = Game Screen
+
+    public void settings() {
+        size(600, 600); 
+    }
+
+    public void setup() {
+        background(255);
+        // Create our hero at position (200, 200)
+        hero = new player(this, 200, 200, "Hero", 18);
+    }
+
+    public void draw() {
+        background(255); // Clear screen with white color every frame
+
+        if (stage == 0) {
+            // Stage 0: Show Main Menu
+            fill(0); 
+            textSize(30);
+            text("FIXXX???", 50, 100);
+            
+            textSize(18);
+            text("Press ENTER to start the game...", 50, 200);
+        } 
+        else if (stage == 1) {
+            // Stage 1: Draw the player square
+            hero.draw(); 
+        }
+    }
+
+    // Keyboard controls
+    public void keyPressed() {
+        // Menu Controls
+        if (stage == 0) {
+            if (keyCode == ENTER) {
+                stage = 1; // Start game
+            }
+        } 
+        //Game Controls 
+        else if (stage == 1) {
+            // 
+            if (key == 'w' || key == 'W') {
+                hero.move(0, -hero.speed); // Move UP
+            }
+            if (key == 's' || key == 'S') {
+                hero.move(0, hero.speed);  // Move DOWN
+            }
+            if (key == 'a' || key == 'A') {
+                hero.move(-hero.speed, 0); // Move LEFT
+            }
+            if (key == 'd' || key == 'D') {
+                hero.move(hero.speed, 0);  // Move RIGHT
+            }
+        }
+    }
+
     public static void main(String[] args) {
-        
-        // Create a game window with a title
-        JFrame window = new JFrame("My RPG");
-        
-        // Set window size
-        window.setSize(600, 600);
-        
-        // Put the window in the center of the screen
-        window.setLocationRelativeTo(null);
-        
-        // Close program
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        //  Make the window background black
-        window.getContentPane().setBackground(Color.BLACK);
-        
-        //  Show the window on the screen
-        window.setVisible(true);
+        PApplet.main("Main");
     }
 }
