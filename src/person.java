@@ -35,6 +35,6 @@ public class person {
     // Draw method (Empty for now, child will handle it or we use basic shape)
     public void draw() {
         app.fill(255, 0, 0); // Red color
-        app.rect(x, y, 40, 40); // Draw a square
+        app.rect(x, y, 24, 24); // Draw a square
     }
 }
