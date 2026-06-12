@@ -34,7 +34,7 @@ public class player extends person {
         this.gold = 30; // Start with some money as you wished!
         this.damage = 10;
         this.defense = 2;
-        this.speed = 5;
+        this.speed = 7;
         this.hasSword = false;
         this.hasShield = false;
     }
