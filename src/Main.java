@@ -11,13 +11,19 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 public class Main extends PApplet {
-
+    public static String GAME_TITLE = "Mulan: Guardian of the Village";
+    
     public player hero; 
     public int stage = 0; // stage 0 = Menu Screen, stage 1 = Game Screen
     public PImage startMap;
     public shop store;
     public PImage monsterCaveMap;
-    public PImage playerImg;
+    //public PImage playerImg;(for testing)
+    public PImage enemy1Img;
+    public PImage enemy2Img;
+    public PImage bossImg;
+    public PImage fightImg;
+
 
     // Add camera variables
     public int camX = 0;
@@ -37,8 +43,8 @@ public class Main extends PApplet {
       public int caveMapWidth = 1254;
        public int caveMapHeight = 1254;
         // Entrance areas(shop,cave)
-    public int shopX = 1005;
-    public int shopY = 330;
+    public int shopX = 1000;
+    public int shopY = 380;
     public int shopW = 45;
     public int shopH = 45;
 
@@ -48,14 +54,15 @@ public class Main extends PApplet {
     public int caveH = 45;
     
         // Monster area variables
-    public int monsterSize = 50;
+   // public int monsterSize = 50;(testing )
 
     public boolean nearMonster = false;
+    public int currentMonster = 0;
         // Battle variables
     public moster caveMonster;
     public boolean defending = false;
     public String battleMessage = "Choose your action!";
-    public boolean monsterDefeated = false;
+    //public boolean monsterDefeated = false;(cancle,
 
     // Monster positions inside cave map
      public int monster1X = 350;
@@ -76,7 +83,7 @@ public class Main extends PApplet {
     public int playerFrame = 1;
     public int playerDirection = 0;
 
-       public boolean playerMoving = false;
+       public boolean playerMoving = false;//(无用）
      public int animationCounter = 0;
 
     public void settings() {
@@ -88,7 +95,7 @@ public class Main extends PApplet {
         // Create our hero at position (200, 200)
         hero = new player(this, 700, 700, "Hero", 18);
         store = new shop();
-        caveMonster = new moster("Slime", 50, 8, 1, 3);
+        caveMonster = new moster("enemy", 50, 8, 1, 3);
         //load startmap image
         startMap = loadImage("startingmap.png");
         mapWidth = startMap.width;
@@ -98,6 +105,11 @@ public class Main extends PApplet {
          caveMapWidth = monsterCaveMap.width;
          caveMapHeight = monsterCaveMap.height;
          // Load player sprite sheet
+         // Load enemy images
+         enemy1Img = loadImage("rogues.png");
+         enemy2Img = loadImage("rogues1.png");
+         bossImg = loadImage("rogues2.png");
+         fightImg = loadImage("fightimage.png");
            playerSheet = loadImage("actor1.png");
            spriteW = playerSheet.width / 3;
            spriteH = playerSheet.height / 4;
@@ -107,13 +119,27 @@ public class Main extends PApplet {
         background(255); // Clear screen with white color every frame
 
         if (stage == 0) {
-            // Stage 0: Show Main Menu
-            fill(0); 
-            textSize(30);
-            text("RPG Game", 50, 100);
+           // Stage 0: Story introduction screen
+        background(30, 25, 35);
 
-            textSize(18);
-            text("Press ENTER to start the game...", 50, 200);
+        fill(255, 220, 120);
+        textSize(34);
+        text(GAME_TITLE, 50, 80);
+
+         fill(255);
+         textSize(18);
+
+           String introText = 
+               "Inspired by the Chinese legend of Hua Mulan, this RPG tells the story of a young village guardian.\n\n" +
+               "During a time of war, enemies and bandits begin to threaten the village. Instead of running away, the guardian chooses to protect her home, her family, and her community.\n\n" +
+               "The player must prepare equipment in the village shop, enter the enemy cave, and defeat the enemies hiding inside.\n\n" +
+               "This story focuses on courage, responsibility, and protecting others.";
+
+           text(introText, 50, 130, 500, 330);
+
+               fill(255, 220, 120);
+               textSize(18);
+               text("Press ENTER to begin your journey...", 130, 530);
         } 
         else if (stage == 1) {
             // Stage 1: Draw the player square
@@ -183,11 +209,10 @@ public class Main extends PApplet {
          // Draw cave map background
           image(monsterCaveMap, 0, 0);
 
-         // Draw three monsters for now
-            fill(0, 180, 0);
-            rect(monster1X, monster1Y, monsterSize, monsterSize);
-            rect(monster2X, monster2Y, monsterSize, monsterSize);
-            rect(monster3X, monster3Y, monsterSize, monsterSize);
+            // Draw three enemies
+            image(enemy1Img, monster1X, monster1Y, 40, 50);
+            image(enemy2Img, monster2X, monster2Y, 44, 50);
+            image(bossImg, monster3X, monster3Y, 48, 52);
 
             // Draw hero
             drawPlayer();
@@ -219,18 +244,29 @@ public class Main extends PApplet {
 
             textSize(18);
             text("Player", 120, 130);
-            text("Monster", 400, 130);
+            text(caveMonster.name, 400, 130);
 
             text("HP: " + hero.hp + "/" + hero.maxHp, 100, 160);
             text("HP: " + caveMonster.hp, 390, 160);
+            // Use a for loop to draw the player's HP bar
+            for (int i = 0; i < hero.hp / 10; i++) {
+                 rect(100 + i * 12, 170, 10, 10);
+            }
 
-            // Draw player battle model(画玩家战斗模型)
-            fill(0, 0, 255);
-            rect(120, 230, 80, 120);
+            // Draw player battle image
+            image(fightImg, 60, 180, 180, 260);
 
-            // Draw monster battle model
-            fill(0, 180, 0);
-            rect(400, 220, 100, 130);
+
+             // Draw monster battle model
+              if (currentMonster == 1) {
+                  image(enemy1Img, 400, 220, 100, 130);
+            }  
+              else if (currentMonster == 2) {
+                    image(enemy2Img, 400, 220, 100, 130);
+            } 
+               else if (currentMonster == 3) {
+                    image(bossImg, 400, 220, 110, 130);
+            }
 
             fill(255);
             textSize(18);
@@ -247,6 +283,7 @@ public class Main extends PApplet {
             text(battleMessage, 120, 540);//战斗结果
    }
     }
+                
     // Mouse control: click somewhere on the screen and the hero will move there
     public void mousePressed() {
         if (stage == 1) {
@@ -259,6 +296,48 @@ public class Main extends PApplet {
             mouseControl = true;
         }
     }
+             // Check if the player is touching a blocked area on the starting map
+             public boolean isBlockedOnStartMap(int newX, int newY) {
+             // Use the player's feet area for collision
+          int px = newX + 18;
+          int py = newY + 42;
+
+               // Center flower circle / tree area
+               if (px >= 520 && px <= 660 && py >= 560 && py <= 700) {
+              return true;
+            }
+
+             // Shop building area
+              if (px >= 840 && px <= 1150 && py >= 250 && py <= 430) {
+                return true;
+            }
+
+            // Blue roof house area
+            if (px >= 150 && px <= 420 && py >= 140 && py <= 390) {
+                return true;
+            }
+
+            // Cave rock area
+            if (px >= 430 && px <= 760 && py >= 820 && py <= 1080) {
+                return true;
+            }
+
+         // Tree near cave/right side
+            if (px >= 730 && px <= 830 && py >= 880 && py <= 1030) {
+              return true;
+            }
+
+        return false;
+   }
+             // Move player only if the new position is not blocked
+             public void moveHeroOnStartMap(int dx, int dy) {
+                 int newX = hero.x + dx;
+                 int newY = hero.y + dy;
+             
+                 if (isBlockedOnStartMap(newX, newY) == false) {
+                     hero.move(dx, dy);
+                 }
+             }
         // Check if the hero enters shop or cave area
     public void checkMapEntrances() {
         if (hero.x >= shopX && hero.x <= shopX + shopW && hero.y >= shopY && hero.y <= shopY + shopH) {
@@ -273,23 +352,40 @@ public class Main extends PApplet {
              mouseControl = false;
 }
     }
-        // Check if hero is close to any monster
-               public void checkNearMonster() {
-                float d1 = dist(hero.x, hero.y, monster1X, monster1Y);
-                float d2 = dist(hero.x, hero.y, monster2X, monster2Y);
-                float d3 = dist(hero.x, hero.y, monster3X, monster3Y);
-                
-             if (d1 < 80 || d2 < 80 || d3 < 80) {
+         // Check if hero is close to any monster
+        public void checkNearMonster() {
+            float d1 = dist(hero.x, hero.y, monster1X, monster1Y);
+            float d2 = dist(hero.x, hero.y, monster2X, monster2Y);
+            float d3 = dist(hero.x, hero.y, monster3X, monster3Y);
+
+                  if (d1 < 80) {
                     nearMonster = true;
-            } else {
+                    currentMonster = 1;
+              } 
+                else if (d2 < 80) {
+                    nearMonster = true;
+                   currentMonster = 2;
+              } 
+                else if (d3 < 80) {
+                    nearMonster = true;
+                    currentMonster = 3;
+              } 
+                else {
                     nearMonster = false;
-          }
-     }
+                    currentMonster = 0;
+            }
+      }
                // Draw player with direction and walking animation
              public void drawPlayer() {
            PImage currentFrame = playerSheet.get(playerFrame * spriteW, playerDirection * spriteH, spriteW, spriteH);
            image(currentFrame, hero.x, hero.y, 36, 48);
-}
+       }
+       /*    // Draw bigger player image for battle screen
+                public void drawBattlePlayer() {
+                      PImage currentFrame = playerSheet.get(playerFrame * spriteW, playerDirection * spriteH, spriteW, spriteH);
+                      image(currentFrame, 130, 230, 90, 120);
+               }*/ // for test
+
         // Player attacks the monster
     public void playerAttack() {
         if (caveMonster.hp > 0 && hero.hp > 0) {
@@ -303,7 +399,7 @@ public class Main extends PApplet {
 
             if (caveMonster.hp <= 0) {
                 caveMonster.hp = 0;
-                monsterDefeated = true;
+             //   monsterDefeated = true;(cancle )
                 hero.gold += 25;
                 battleMessage = "You defeated the monster! +25 gold. Press R to return.";
             } else {
@@ -335,6 +431,21 @@ public class Main extends PApplet {
             battleMessage = battleMessage + " Monster hit you for " + damageToPlayer + " damage.";
         }
     }
+        // Create a monster for the battle based on currentMonster
+          public void createBattleMonster() {
+              if (currentMonster == 1) {
+                   caveMonster = new moster("ROBBERS", 70, 8, 3, 3);// 血量, 攻击力, 防御力, 速度
+            } 
+              else if (currentMonster == 2) {
+                 caveMonster = new moster("THe second warrior", 77, 7, 7, 3);
+            } 
+              else if (currentMonster == 3) {
+                 caveMonster = new moster("Boss", 164, 14, 4, 4);
+            }
+
+              defending = false;
+              battleMessage = caveMonster.name + " appeared!";
+          }
 
     // Player defends
     public void playerDefend() {
@@ -391,28 +502,28 @@ public class Main extends PApplet {
         
         // Keyboard movement will stop mouse movement
         if (key == 'w' || key == 'W' || keyCode == UP) {
-            hero.move(0, -hero.speed);//move up
+            moveHeroOnStartMap(0, -hero.speed);//move up
             playerDirection = 3;
             playerMoving = true;
             updatePlayerAnimation();
             mouseControl = false;
         }
         if (key == 's' || key == 'S' || keyCode == DOWN) {
-            hero.move(0, hero.speed);//move down
+            moveHeroOnStartMap(0, hero.speed);//move down
             playerDirection = 0;
             playerMoving = true;
             updatePlayerAnimation();
             mouseControl = false;
         }
         if (key == 'a' || key == 'A' || keyCode == LEFT) {
-             hero.move(-hero.speed, 0);//MOVE left
+             moveHeroOnStartMap(-hero.speed, 0);//MOVE left
              playerDirection = 1;
              playerMoving = true;
               updatePlayerAnimation();
               mouseControl = false;
         }
         if (key == 'd' || key == 'D' || keyCode == RIGHT) {
-        hero.move(hero.speed, 0);//move right
+        moveHeroOnStartMap(hero.speed, 0);//move right
         playerDirection = 2;
         playerMoving = true;
         updatePlayerAnimation();
@@ -442,18 +553,30 @@ public class Main extends PApplet {
           else if (stage == 3) {
     if (key == 'w' || key == 'W' || keyCode == UP) {
         hero.move(0, -hero.speed);
+        playerDirection = 3;
+        playerMoving = true;
+        updatePlayerAnimation();
         mouseControl = false;
     }
     if (key == 's' || key == 'S' || keyCode == DOWN) {
         hero.move(0, hero.speed);
+        playerDirection = 0;
+        playerMoving = true;
+        updatePlayerAnimation();
         mouseControl = false;
     }
     if (key == 'a' || key == 'A' || keyCode == LEFT) {
         hero.move(-hero.speed, 0);
+        playerDirection = 1;
+        playerMoving = true;
+        updatePlayerAnimation();
         mouseControl = false;
     }
     if (key == 'd' || key == 'D' || keyCode == RIGHT) {
         hero.move(hero.speed, 0);
+        playerDirection = 2;
+        playerMoving = true;
+        updatePlayerAnimation();
         mouseControl = false;
     }
 
@@ -463,6 +586,8 @@ public class Main extends PApplet {
 
     if (key == 'e' || key == 'E') {
         if (nearMonster == true) {
+            hero.hp = hero.maxHp; // Restore full HP before battle
+            createBattleMonster();
             stage = 4;
         }
     }
@@ -470,7 +595,7 @@ public class Main extends PApplet {
     if (key == 'b' || key == 'B') {
         stage = 1;
         hero.x = 598;
-        hero.y = 950;
+        hero.y = 1100;
         mouseControl = false;
     }
 }

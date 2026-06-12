@@ -24,4 +24,11 @@ public class moster {
         this.defense = defense;
         this.speed = speed;
     }
+      public moster(String name, int hp) {
+      this.name = name;
+      this.hp = hp;
+      this.damage = 5;
+      this.defense = 1;
+      this.speed = 3;
+  }
 }

@@ -11,7 +11,12 @@
 import processing.core.PApplet;
 
 // player inherits from person (Inheritance)
-public class player extends person {
+        public class player extends person {
+        @Override
+        public void draw() {
+         app.fill(0, 0, 255);
+         app.rect(x, y, 36, 48);
+   }
     
     // RPG attributes
     public int hp;
@@ -31,7 +36,7 @@ public class player extends person {
         // Setup starting values
         this.maxHp = 100;
         this.hp = 100;
-        this.gold = 30; // Start with some money as you wished!
+        this.gold = 10; // Start with some money as you wished!
         this.damage = 10;
         this.defense = 2;
         this.speed = 7;

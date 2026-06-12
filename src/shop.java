@@ -12,8 +12,8 @@ public class shop {
     public int shieldPrice;
     
     public shop() {
-        this.swordPrice = 20;
-        this.shieldPrice = 20;
+        this.swordPrice = 25;
+        this.shieldPrice = 25;
     }
     
     // Association: shop uses a player object
